@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "587886628314",
+    "project_id": "expance-manager-2599a",
+    "storage_bucket": "expance-manager-2599a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:587886628314:android:1290aa73fe01d5736804e3",
+        "android_client_info": {
+          "package_name": "com.example.expense_manager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "587886628314-e03i4sp9d9ni47o2lk7u924v91en2qtv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4Y-pMAUyL8F5OPyOCduLlXz8Waen4nxM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "587886628314-e03i4sp9d9ni47o2lk7u924v91en2qtv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
