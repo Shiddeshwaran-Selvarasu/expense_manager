@@ -140,7 +140,36 @@ class _LoginPageState extends State<LoginPage> {
                 child: const Text('Login'),
               ),
             ),
-          )
+          ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: 90,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+              child: OutlinedButton.icon(
+                  label: const Text(
+                    'Sign in with Google',
+                    style: TextStyle(color: Colors.black,fontSize: 18,),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    elevation: 1,
+                    shape: const StadiumBorder(),
+                    side: const BorderSide(
+                        width: 2, color: Colors.black12),
+                  ),
+                  icon: Padding(
+                    padding: const EdgeInsets.only(top: 8,bottom: 8,),
+                    child: Image.asset(
+                      'assets/google-icon.png',
+                      width: 35,
+                    ),
+                  ),
+                  onPressed: () {
+                    provider.googleLogIn();
+                  }),
+            ),
+          ),
         ],
       ),
     );

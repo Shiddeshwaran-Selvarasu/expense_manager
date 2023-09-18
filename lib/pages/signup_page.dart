@@ -24,6 +24,14 @@ class _SignUpPageState extends State<SignUpPage> {
         backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
         centerTitle: true,
         title: const Text('Sign Up'),
+        actions: [
+          IconButton(
+            onPressed: () {
+
+            },
+            icon: const Icon(Icons.done),
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -54,7 +62,7 @@ class _SignUpPageState extends State<SignUpPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
             child: TextField(
-              controller: email,
+              controller: password,
               decoration: InputDecoration(
                 hintText: 'Enter Password',
                 errorText: passError,

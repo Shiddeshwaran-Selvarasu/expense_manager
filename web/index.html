@@ -55,5 +55,23 @@
       });
     });
   </script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAiUvZNcWTekYHu0nRnmLSyBZy1stXcGDs",
+      appId: "1:587886628314:web:83787a774427faa06804e3",
+      messagingSenderId: "587886628314",
+      projectId: "expance-manager-2599a",
+      authDomain: "expance-manager-2599a.firebaseapp.com",
+      storageBucket: "expance-manager-2599a.appspot.com",
+      measurementId: "G-LXLGN10WP3",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+
+  </script>
 </body>
 </html>
