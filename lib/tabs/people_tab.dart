@@ -77,8 +77,8 @@ class _PeopleState extends State<People> {
                 padding: const EdgeInsets.only(right: 10),
                 child: TextButton(
                   onPressed: () {
-                    Navigator.pop(context);
                     deleteMember(userList);
+                    Navigator.pop(context);
                   },
                   child: const Text(
                     "Delete",
@@ -96,8 +96,11 @@ class _PeopleState extends State<People> {
   }
 
   deleteMember(UserList userList) {
-    if (user!.email != widget.room.admin) {
+    print(user!.email);
+    print(widget.room.admin);
+    if (user!.email == widget.room.admin) {
       setState(() {
+        print(userList.email);
         FirebaseFirestore.instance.doc('/rooms/${widget.room.code}').update({
           'people': FieldValue.arrayRemove([userList.email]),
         });

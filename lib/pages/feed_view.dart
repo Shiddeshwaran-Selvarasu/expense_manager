@@ -10,21 +10,13 @@ class FeedView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var brightness = MediaQuery.of(context).platformBrightness;
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,
-        title: Text(
-          "Feed",
-          style: TextStyle(
-            color: brightness == Brightness.light ? Colors.black : Colors.white,
-          ),
-        ),
-        backgroundColor:
-        brightness == Brightness.dark ? Colors.black26 : Colors.white,
+        title: const Text("Feed"),
+        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
         leading: IconButton(
-          color: brightness == Brightness.light ? Colors.black : Colors.white,
           onPressed: () {
             Navigator.pop(context);
           },
@@ -46,8 +38,12 @@ class FeedView extends StatelessWidget {
                     leading: CircleAvatar(
                       foregroundImage: NetworkImage(feed.authorProfile),
                     ),
-                    title: Text(feed.author,style: const TextStyle(fontWeight: FontWeight.w500),),
-                    subtitle: Text(TimeHandler().getTimeDiff(feed.createdAt.toDate())),
+                    title: Text(
+                      feed.author,
+                      style: const TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                    subtitle: Text(
+                        TimeHandler().getTimeDiff(feed.createdAt.toDate())),
                   ),
                   const Divider(
                     thickness: 1.2,
@@ -64,19 +60,24 @@ class FeedView extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 15,),
-              feed.imageURL != '' ? Image.network(feed.imageURL) : const SizedBox(),
+              const SizedBox(
+                height: 15,
+              ),
+              feed.imageURL != ''
+                  ? Image.network(feed.imageURL)
+                  : const SizedBox(),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20,horizontal: 10),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
                 child: Text(feed.description, textAlign: TextAlign.justify),
               ),
               feed.link != ''
                   ? TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    feed.link,
-                    style: const TextStyle(color: Colors.blue),
-                  ))
+                      onPressed: () {},
+                      child: Text(
+                        feed.link,
+                        style: const TextStyle(color: Colors.blue),
+                      ))
                   : const SizedBox(),
             ],
           ),

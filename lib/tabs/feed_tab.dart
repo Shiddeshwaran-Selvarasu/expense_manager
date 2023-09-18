@@ -130,6 +130,7 @@ class _FeedsState extends State<Feeds> {
 
             if (snapshot.hasData) {
               for (var element in snapshot.data!.docs) {
+                print(element.data().toString());
                 feedsList.add(Feed.fromJson(element.data()));
               }
               return feedsList.isNotEmpty

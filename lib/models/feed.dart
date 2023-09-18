@@ -31,13 +31,14 @@ class Feed {
   }
 
   static Feed fromJson(var data) {
+    print(data['title']);
     return Feed.from(
-      title: data['title'],
+      title: data['title'] ?? '',
       imageURL: data['imageURL'],
       description: data['description'],
       createdAt: data['createdAt'],
       author: data['author'],
-      authorProfile: data['authorProfile'],
+      authorProfile: data['authorProfile'] ?? '',
     );
   }
 }

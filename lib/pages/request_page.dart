@@ -62,7 +62,7 @@ class _RequestPageState extends State<RequestPage> {
             .doc(user!.email)
             .snapshots(),
         builder: (context, snapshot) {
-          List<DocumentReference<Map<String, dynamic>>> requestList = [];
+          var requestList = [];
 
           if (snapshot.hasData) {
             Map<String, dynamic> data = snapshot.data!.data() ?? {};
@@ -71,7 +71,7 @@ class _RequestPageState extends State<RequestPage> {
                 ? ListView.builder(
                     itemCount: requestList.length,
                     itemBuilder: (context, index) {
-                      return StreamBuilder(
+                      return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
                         stream: requestList[index].snapshots(),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
@@ -108,8 +108,8 @@ class _RequestPageState extends State<RequestPage> {
                     },
                   )
                 : Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: Column(
+                    padding: const EdgeInsets.all(15),
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       mainAxisSize: MainAxisSize.max,
                       children: [
@@ -124,7 +124,7 @@ class _RequestPageState extends State<RequestPage> {
                         ),
                       ],
                     ),
-                );
+                  );
           }
 
           return const Center(

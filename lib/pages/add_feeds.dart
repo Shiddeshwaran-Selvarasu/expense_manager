@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '../models/feed.dart';
+
 class AddFeeds extends StatefulWidget {
   const AddFeeds({Key? key, required this.code}) : super(key: key);
 
@@ -57,17 +59,18 @@ class _AddFeedsState extends State<AddFeeds> {
 
   addFeeds() {
     if (checkFields()) {
+      Feed feed = Feed.from(
+        title: tileController.value.text,
+        imageURL: imageController.value.text,
+        description: contentController.value.text,
+        createdAt: Timestamp.fromDate(DateTime.now()),
+        author: user!.displayName ?? 'unknown user',
+        authorProfile: user!.photoURL ?? defaultProfileImage,
+        link: linkController.value.text,
+      );
       var snapshot = FirebaseFirestore.instance
           .collection('/rooms/${widget.code}/Feeds')
-          .add({
-        'author': user!.displayName,
-        'authorImage': user!.photoURL ?? defaultProfileImage,
-        'time': Timestamp.fromDate(DateTime.now()),
-        'title': tileController.value.text,
-        'image': imageController.value.text,
-        'link': linkController.value.text,
-        'content': contentController.value.text,
-      });
+          .add(feed.toMap());
       snapshot.then((value) {
         print(value.id);
         _showToast("Feeds Updated!");
