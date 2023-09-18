@@ -2,9 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../models/room.dart';
-import '../tabs/chat_view.dart';
-import '../tabs/feed_view.dart';
-import '../tabs/people_view.dart';
+import '../tabs/chat_tab.dart';
+import '../tabs/feed_tab.dart';
+import '../tabs/people_tab.dart';
 
 class RoomPage extends StatefulWidget {
   const RoomPage({super.key, required this.room});

@@ -1,0 +1,1 @@
+const String defaultProfileImage = "https://img.freepik.com/free-icon/user_318-159711.jpg";

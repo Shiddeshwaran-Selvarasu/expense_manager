@@ -18,8 +18,6 @@ class Feeds extends StatefulWidget {
 }
 
 class _FeedsState extends State<Feeds> {
-  var feedsList = [];
-
   final user = FirebaseAuth.instance.currentUser;
   final snackBar = const SnackBar(
     content: Text('Access Denied! you are not a Teacher'),
@@ -28,39 +26,12 @@ class _FeedsState extends State<Feeds> {
     behavior: SnackBarBehavior.floating,
   );
 
-
-  loadFeeds() {
-    setState(() {
-      feedsList.clear();
-    });
-    FirebaseFirestore.instance
-        .collection("/rooms/${widget.room.code}/Feeds")
-        .orderBy('time', descending: true)
-        .get()
-        .then((value) {
-      value.docs.forEach((element) {
-        setState(() {
-          feedsList.add(Feed.from(
-            title: element.data()['title'],
-            imageURL: element.data()['image'],
-            description: element.data()['content'],
-            link: element.data()['link'],
-            author: element.data()['author'],
-            createdAt: element.data()['time'],
-            authorProfile: element.data()['authorProfile'] ?? '',
-          ));
-        });
-      });
-    });
-  }
-
   addFeeds() {
     if (user!.email == widget.room.admin) {
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => AddFeeds(
-            refreshFeeds: loadFeeds,
             code: widget.room.code,
           ),
         ),
@@ -76,20 +47,17 @@ class _FeedsState extends State<Feeds> {
   }
 
   deleteFeed(Feed feed) {
-    setState(() {
-      feedsList.remove(feed);
-    });
     FirebaseFirestore.instance
         .collection('rooms/${widget.room.code}/Feeds')
         .where("time", isEqualTo: feed.createdAt)
         .get()
         .then((value) {
-      value.docs.forEach((element) {
+      for (var element in value.docs) {
         FirebaseFirestore.instance
             .collection('rooms/${widget.room.code}/Feeds')
             .doc(element.id)
             .delete();
-      });
+      }
     });
   }
 
@@ -153,21 +121,32 @@ class _FeedsState extends State<Feeds> {
   Widget build(BuildContext context) {
     return Center(
       child: Scaffold(
-        body: RefreshIndicator(
-          onRefresh: () async {
-            setState(() {
-              feedsList.clear();
-            });
-            loadFeeds();
+        body: StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection('/rooms/${widget.room.code}/Feeds')
+              .snapshots(),
+          builder: (context, snapshot) {
+            var feedsList = [];
+
+            if (snapshot.hasData) {
+              for (var element in snapshot.data!.docs) {
+                feedsList.add(Feed.fromJson(element.data()));
+              }
+              return feedsList.isNotEmpty
+                  ? ListView.builder(
+                      itemCount: feedsList.length,
+                      itemBuilder: (context, index) =>
+                          feedsCard(feedsList[index]),
+                    )
+                  : const Center(
+                      child: Text("No Feeds to show..."),
+                    );
+            }
+
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           },
-          child: feedsList.isNotEmpty
-              ? ListView.builder(
-                  itemCount: feedsList.length,
-                  itemBuilder: (context, index) => feedsCard(feedsList[index]),
-                )
-              : const Center(
-                  child: Text("No Feeds to show..."),
-                ),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: addFeeds,
@@ -206,7 +185,8 @@ class _FeedsState extends State<Feeds> {
                     fontSize: 18,
                   ),
                 ),
-                subtitle: Text(TimeHandler().getTimeDiff(value.createdAt.toDate())),
+                subtitle:
+                    Text(TimeHandler().getTimeDiff(value.createdAt.toDate())),
                 trailing: user!.email == widget.room.admin
                     ? IconButton(
                         onPressed: () {

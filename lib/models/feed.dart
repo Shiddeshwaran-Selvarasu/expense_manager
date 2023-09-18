@@ -18,4 +18,26 @@ class Feed {
     required this.author,
     required this.authorProfile,
   });
+
+  Map<String, dynamic> toMap(){
+    return {
+      'title' : title,
+      'imageURL': imageURL,
+      'description': description,
+      'createdAt': createdAt,
+      'author' : author,
+      'authorProfile': authorProfile,
+    };
+  }
+
+  static Feed fromJson(var data) {
+    return Feed.from(
+      title: data['title'],
+      imageURL: data['imageURL'],
+      description: data['description'],
+      createdAt: data['createdAt'],
+      author: data['author'],
+      authorProfile: data['authorProfile'],
+    );
+  }
 }

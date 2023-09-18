@@ -5,13 +5,13 @@ class AddPeopleList {
     required this.controller,
     required this.key,
     this.errorText = null,
-    this.isTeacher = false,
+    this.isOptional = false,
   });
 
   final TextEditingController controller;
   final String key;
   String? errorText;
-  bool isTeacher;
+  bool isOptional;
 }
 
 class UserList {

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:expense_manager/models/constants.dart';
 import 'package:expense_manager/pages/add_room.dart';
 import 'package:expense_manager/utils/login_manager.dart';
 import 'package:expense_manager/widgets/rooms_list.dart';
@@ -45,23 +46,45 @@ class _HomePageState extends State<HomePage> {
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     var data = snapshot.data!.data();
-                    var photo = data!['profileImageUrl'] ??
-                        "https://img.freepik.com/free-icon/user_318-159711.jpg";
+                    var photo = data!['profileImageUrl'] ?? defaultProfileImage;
                     return Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 5),
                       child: InkWell(
-                        onTap: (){
+                        onTap: () {
                           showDialog(
                             context: context,
-                            builder: (context) => const AccountPopUp(
-                              action: [],
+                            builder: (context) => AccountPopUp(
+                              action: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 0, horizontal: 15),
+                                  child: ListTile(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => RequestPage(),
+                                        ),
+                                      );
+                                    },
+                                    leading: const Icon(
+                                      Icons.notifications,
+                                      color: Colors.orangeAccent,
+                                    ),
+                                    title: const Text("Requests"),
+                                  ),
+                                ),
+                              ],
                             ),
                           );
                         },
                         child: CircleAvatar(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.primary.withAlpha(50),
+                          backgroundColor: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withAlpha(50),
                           foregroundImage: NetworkImage(photo),
                         ),
                       ),

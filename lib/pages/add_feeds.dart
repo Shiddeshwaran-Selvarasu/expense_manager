@@ -1,14 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:expense_manager/models/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class AddFeeds extends StatefulWidget {
-  const AddFeeds({Key? key, required this.refreshFeeds, required this.code})
-      : super(key: key);
+  const AddFeeds({Key? key, required this.code}) : super(key: key);
 
   final String code;
-  final Function refreshFeeds;
 
   @override
   _AddFeedsState createState() => _AddFeedsState();
@@ -21,8 +20,8 @@ class _AddFeedsState extends State<AddFeeds> {
   TextEditingController linkController = TextEditingController();
   TextEditingController contentController = TextEditingController();
 
-  String? titleError = null;
-  String? contentError = null;
+  String? titleError;
+  String? contentError;
 
   void _showToast(String text) {
     Fluttertoast.showToast(
@@ -56,22 +55,24 @@ class _AddFeedsState extends State<AddFeeds> {
     }
   }
 
-  addFeeds(){
-    if(checkFields()){
-      var snapshot = FirebaseFirestore.instance.collection('/rooms/${widget.code}/Feeds').add({
-        'author' : user!.displayName,
-        'authorImage' : user!.photoURL,
-        'time' : Timestamp.fromDate(DateTime.now()),
-        'title' : tileController.value.text,
-        'image' : imageController.value.text,
-        'link' : linkController.value.text,
-        'content' : contentController.value.text,
+  addFeeds() {
+    if (checkFields()) {
+      var snapshot = FirebaseFirestore.instance
+          .collection('/rooms/${widget.code}/Feeds')
+          .add({
+        'author': user!.displayName,
+        'authorImage': user!.photoURL ?? defaultProfileImage,
+        'time': Timestamp.fromDate(DateTime.now()),
+        'title': tileController.value.text,
+        'image': imageController.value.text,
+        'link': linkController.value.text,
+        'content': contentController.value.text,
       });
       snapshot.then((value) {
         print(value.id);
         _showToast("Feeds Updated!");
       });
-      snapshot.catchError((e){
+      snapshot.catchError((e) {
         _showToast(e);
       });
       return true;
@@ -93,7 +94,7 @@ class _AddFeedsState extends State<AddFeeds> {
           ),
         ),
         backgroundColor:
-        brightness == Brightness.dark ? Colors.black26 : Colors.white,
+            brightness == Brightness.dark ? Colors.black26 : Colors.white,
         leading: IconButton(
           color: brightness == Brightness.light ? Colors.black : Colors.white,
           onPressed: () {
@@ -105,10 +106,10 @@ class _AddFeedsState extends State<AddFeeds> {
           Padding(
             padding: const EdgeInsets.only(right: 10),
             child: IconButton(
-              color: brightness == Brightness.light ? Colors.black : Colors.white,
+              color:
+                  brightness == Brightness.light ? Colors.black : Colors.white,
               onPressed: () {
                 if (addFeeds()) {
-                  widget.refreshFeeds();
                   Navigator.pop(context);
                 }
               },
@@ -133,7 +134,7 @@ class _AddFeedsState extends State<AddFeeds> {
                     borderSide: BorderSide(),
                   ),
                 ),
-                onChanged: (text){
+                onChanged: (text) {
                   if (text == '') {
                     setState(() {
                       titleError = 'Title Can\'t be Empty';
@@ -171,7 +172,7 @@ class _AddFeedsState extends State<AddFeeds> {
                     borderSide: BorderSide(),
                   ),
                 ),
-                onChanged: (text){
+                onChanged: (text) {
                   if (text == '') {
                     setState(() {
                       contentError = 'Content Can\'t be Empty';
