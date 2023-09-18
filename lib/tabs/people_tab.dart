@@ -126,25 +126,44 @@ class _PeopleState extends State<People> {
       body: StreamBuilder(
         stream: FirebaseFirestore.instance.collection('/rooms').doc(widget.room.code).snapshots(),
         builder: (context, snapshot){
-          List<UserList> peopleList = [];
+          List<dynamic> peopleList = [];
 
           if(snapshot.hasData){
+            var data = snapshot.data!.data() ?? {};
+            peopleList = data['people'];
             return ListView.builder(
               itemCount: peopleList.length,
               itemBuilder: (context, index) => Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: ListTile(
-                  leading: CircleAvatar(
-                    foregroundImage: NetworkImage(peopleList[index].imageUrl),
-                  ),
-                  title: Text(
-                    peopleList[index].name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                    ),
-                  ),
-                  trailing: deleteMemberButton(peopleList[index]),
+                child: StreamBuilder(
+                  stream: FirebaseFirestore.instance.collection('/users').doc(peopleList[index]).snapshots(),
+                  builder: (context, snapshot) {
+                    if(snapshot.hasData){
+                      var snapData = snapshot.data!.data() ?? {};
+                      var userData = UserList(name: snapData['name'], email: snapData['email'], imageUrl: snapData['profileImageUrl']);
+                      return ListTile(
+                        leading: CircleAvatar(
+                          foregroundImage: NetworkImage(userData.imageUrl),
+                        ),
+                        title: Text(
+                          userData.name,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                          ),
+                        ),
+                        subtitle: Text(
+                          userData.email,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 16,
+                          ),
+                        ),
+                        trailing: deleteMemberButton(userData),
+                      );
+                    }
+                    return const SizedBox();
+                  },
                 ),
               ),
             );

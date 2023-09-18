@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expense_manager/models/constants.dart';
 import 'package:expense_manager/pages/add_room.dart';
+import 'package:expense_manager/pages/request_page.dart';
 import 'package:expense_manager/utils/login_manager.dart';
 import 'package:expense_manager/widgets/rooms_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -65,7 +66,7 @@ class _HomePageState extends State<HomePage> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => RequestPage(),
+                                          builder: (context) => const RequestPage(),
                                         ),
                                       );
                                     },
