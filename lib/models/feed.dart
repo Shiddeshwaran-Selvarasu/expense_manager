@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Feed {
   String title;
+  String? id;
   String imageURL;
   String description;
   Timestamp createdAt;

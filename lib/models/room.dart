@@ -20,13 +20,15 @@ class Room {
     String charSet = DateTime.now().toString() + name + admin;
     charSet = charSet.replaceAll(RegExp(r'[^\w]+'), '');
     Random ram = Random();
+    List<String> list = [];
+    list.add(admin);
     var code = String.fromCharCodes(
       Iterable.generate(
         8,
         (_) => charSet.codeUnitAt(ram.nextInt(charSet.length)),
       ),
     );
-    return Room.from(code: code, name: name, admin: admin);
+    return Room.from(code: code, name: name, admin: admin, members: list);
   }
 
   @override

@@ -6,6 +6,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
+import '../models/constants.dart';
+
 class LoginProvider extends ChangeNotifier {
   final googleSignIn = GoogleSignIn();
 
@@ -101,7 +103,7 @@ class LoginProvider extends ChangeNotifier {
               'name' : user.displayName,
               'email' : user.email,
               'rooms' : FieldValue.arrayUnion([]),
-              'profileImageUrl' : user.photoUrl,
+              'profileImageUrl' : user.photoUrl ?? defaultProfileImage,
             }).catchError((e){
               _showToast(e,true);
             });
@@ -110,7 +112,7 @@ class LoginProvider extends ChangeNotifier {
               'name' : user.displayName,
               'email' : user.email,
               'rooms' : FieldValue.arrayUnion([]),
-              'profileImageUrl' : user.photoUrl,
+              'profileImageUrl' : user.photoUrl ?? defaultProfileImage,
             }).catchError((e){
               _showToast(e,true);
             });

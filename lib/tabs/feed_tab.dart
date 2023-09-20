@@ -26,6 +26,13 @@ class _FeedsState extends State<Feeds> {
     behavior: SnackBarBehavior.floating,
   );
 
+  final feedDeleteError = const SnackBar(
+    content: Text('Something went wrong! please restart and try again.'),
+    backgroundColor: Colors.yellowAccent,
+    duration: Duration(seconds: 4),
+    behavior: SnackBarBehavior.floating,
+  );
+
   addFeeds() {
     if (user!.email == widget.room.admin) {
       Navigator.push(
@@ -47,18 +54,17 @@ class _FeedsState extends State<Feeds> {
   }
 
   deleteFeed(Feed feed) {
-    FirebaseFirestore.instance
-        .collection('rooms/${widget.room.code}/Feeds')
-        .where("time", isEqualTo: feed.createdAt)
-        .get()
-        .then((value) {
-      for (var element in value.docs) {
-        FirebaseFirestore.instance
-            .collection('rooms/${widget.room.code}/Feeds')
-            .doc(element.id)
-            .delete();
-      }
-    });
+    if(feed.id == null) {
+      ScaffoldMessenger.of(context).showSnackBar(feedDeleteError);
+    } else {
+      FirebaseFirestore.instance
+          .collection('rooms/${widget.room.code}/Feeds')
+          .doc(feed.id!)
+          .delete()
+          .onError((error, stackTrace) {
+        ScaffoldMessenger.of(context).showSnackBar(feedDeleteError);
+      });
+    }
   }
 
   showAlert(value) {
@@ -130,8 +136,9 @@ class _FeedsState extends State<Feeds> {
 
             if (snapshot.hasData) {
               for (var element in snapshot.data!.docs) {
-                print(element.data().toString());
-                feedsList.add(Feed.fromJson(element.data()));
+                var feedItem = Feed.fromJson(element.data());
+                feedItem.id = element.id;
+                feedsList.add(feedItem);
               }
               return feedsList.isNotEmpty
                   ? ListView.builder(
