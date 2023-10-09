@@ -110,7 +110,9 @@ class _RoomPageState extends State<RoomPage> {
           });
         },
         children: [
-          const ChatView(),
+          ChatView(
+            room: widget.room,
+          ),
           Feeds(
             room: widget.room,
           ),

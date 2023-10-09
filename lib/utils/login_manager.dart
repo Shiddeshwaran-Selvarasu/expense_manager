@@ -80,8 +80,31 @@ class LoginProvider extends ChangeNotifier {
         await FirebaseAuth.instance.signInWithPopup(authProvider);
 
         user = userCredential.user;
+
+        var snapshot = FirebaseFirestore.instance.collection('/users');
+        snapshot.doc(user.email).get().then((value){
+          if(!value.exists){
+            snapshot.doc(user.email).set({
+              'name' : user.displayName,
+              'email' : user.email,
+              'rooms' : FieldValue.arrayUnion([]),
+              'profileImageUrl' : user.photoUrl ?? defaultProfileImage,
+            }).catchError((e){
+              _showToast(e,true);
+            });
+          } else {
+            snapshot.doc(user.email).update({
+              'name' : user.displayName,
+              'email' : user.email,
+              'rooms' : FieldValue.arrayUnion([]),
+              'profileImageUrl' : user.photoUrl ?? defaultProfileImage,
+            }).catchError((e){
+              _showToast(e,true);
+            });
+          }
+        });
       } catch (e) {
-        print(e);
+        _showToast(e.toString(),true);
       }
     } else {
       user = await googleSignIn.signIn();

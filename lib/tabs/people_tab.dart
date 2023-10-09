@@ -19,7 +19,7 @@ class _PeopleState extends State<People> {
   final user = FirebaseAuth.instance.currentUser;
 
   final snackBar = const SnackBar(
-    content: Text('Access Denied! you are not a Teacher'),
+    content: Text('Access Denied! you are not The Admin'),
     backgroundColor: Colors.red,
     duration: Duration(seconds: 4),
     behavior: SnackBarBehavior.floating,

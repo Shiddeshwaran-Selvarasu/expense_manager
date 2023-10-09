@@ -125,41 +125,39 @@ class _FeedsState extends State<Feeds> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Scaffold(
-        body: StreamBuilder(
-          stream: FirebaseFirestore.instance
-              .collection('/rooms/${widget.room.code}/Feeds')
-              .snapshots(),
-          builder: (context, snapshot) {
-            var feedsList = [];
+    return Scaffold(
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection('/rooms/${widget.room.code}/Feeds')
+            .snapshots(),
+        builder: (context, snapshot) {
+          var feedsList = [];
 
-            if (snapshot.hasData) {
-              for (var element in snapshot.data!.docs) {
-                var feedItem = Feed.fromJson(element.data());
-                feedItem.id = element.id;
-                feedsList.add(feedItem);
-              }
-              return feedsList.isNotEmpty
-                  ? ListView.builder(
-                      itemCount: feedsList.length,
-                      itemBuilder: (context, index) =>
-                          feedsCard(feedsList[index]),
-                    )
-                  : const Center(
-                      child: Text("No Feeds to show..."),
-                    );
+          if (snapshot.hasData) {
+            for (var element in snapshot.data!.docs) {
+              var feedItem = Feed.fromJson(element.data());
+              feedItem.id = element.id;
+              feedsList.add(feedItem);
             }
+            return feedsList.isNotEmpty
+                ? ListView.builder(
+                    itemCount: feedsList.length,
+                    itemBuilder: (context, index) =>
+                        feedsCard(feedsList[index]),
+                  )
+                : const Center(
+                    child: Text("No Feeds to show..."),
+                  );
+          }
 
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          },
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: addFeeds,
-          child: const Icon(Icons.add),
-        ),
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: addFeeds,
+        child: const Icon(Icons.add),
       ),
     );
   }

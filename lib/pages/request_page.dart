@@ -95,7 +95,7 @@ class _RequestPageState extends State<RequestPage> {
                                 ),
                                 trailing: IconButton(
                                   onPressed: () {
-                                    acceptRequest(index);
+                                    acceptRequest(requestList[index]);
                                   },
                                   icon: const Icon(Icons.check),
                                 ),
