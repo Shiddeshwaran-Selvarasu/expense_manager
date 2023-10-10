@@ -43,7 +43,7 @@ class FeedView extends StatelessWidget {
                       style: const TextStyle(fontWeight: FontWeight.w500),
                     ),
                     subtitle: Text(
-                        TimeHandler().getTimeDiff(feed.createdAt.toDate())),
+                        DateTimeHandler.getDateTimeDiff(feed.createdAt.toDate())),
                   ),
                   const Divider(
                     thickness: 1.2,

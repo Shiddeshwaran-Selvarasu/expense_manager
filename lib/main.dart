@@ -26,49 +26,50 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
-        builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-      return MaterialApp(
-        themeMode: ThemeMode.system,
-        darkTheme: ThemeData(
-          useMaterial3: true,
-          brightness: Brightness.dark,
-          colorScheme: darkDynamic ??
-              ColorScheme.fromSeed(
-                seedColor: Colors.deepPurple,
-                brightness: Brightness.dark,
+      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+        return MaterialApp(
+          themeMode: ThemeMode.system,
+          darkTheme: ThemeData(
+            useMaterial3: true,
+            brightness: Brightness.dark,
+            colorScheme: darkDynamic ??
+                ColorScheme.fromSeed(
+                  seedColor: Colors.deepPurple,
+                  brightness: Brightness.dark,
+                ),
+          ),
+          theme: ThemeData(
+            useMaterial3: true,
+            brightness: Brightness.light,
+            colorScheme: lightDynamic ??
+                ColorScheme.fromSeed(
+                  seedColor: Colors.deepPurple,
+                  brightness: Brightness.light,
+                ),
+          ),
+          debugShowCheckedModeBanner: false,
+          home: Scaffold(
+            body: ChangeNotifierProvider(
+              create: (context) => LoginProvider(),
+              child: StreamBuilder(
+                stream: FirebaseAuth.instance.authStateChanges(),
+                builder: (context, snapshot) {
+                  final provider = Provider.of<LoginProvider>(context);
+                  if (provider.isSigningIn) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (snapshot.hasData) {
+                    return const HomePage();
+                  } else {
+                    return LoginPage(random: (Random().nextInt(3) + 1));
+                  }
+                },
               ),
-        ),
-        theme: ThemeData(
-          useMaterial3: true,
-          brightness: Brightness.light,
-          colorScheme: lightDynamic ??
-              ColorScheme.fromSeed(
-                seedColor: Colors.deepPurple,
-                brightness: Brightness.light,
-              ),
-        ),
-        debugShowCheckedModeBanner: false,
-        home: Scaffold(
-          body: ChangeNotifierProvider(
-            create: (context) => LoginProvider(),
-            child: StreamBuilder(
-              stream: FirebaseAuth.instance.authStateChanges(),
-              builder: (context, snapshot) {
-                final provider = Provider.of<LoginProvider>(context);
-                if (provider.isSigningIn) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (snapshot.hasData) {
-                  return const HomePage();
-                } else {
-                  return LoginPage(random: (Random().nextInt(3)+1));
-                }
-              },
             ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 }

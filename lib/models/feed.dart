@@ -32,7 +32,6 @@ class Feed {
   }
 
   static Feed fromJson(var data) {
-    print(data['title']);
     return Feed.from(
       title: data['title'] ?? '',
       imageURL: data['imageURL'],

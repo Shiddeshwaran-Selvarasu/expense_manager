@@ -48,13 +48,8 @@ class _FeedsState extends State<Feeds> {
     }
   }
 
-  String getPostTime(DateTime time) {
-    print(time.difference(DateTime.now()).inDays);
-    return time.toString();
-  }
-
   deleteFeed(Feed feed) {
-    if(feed.id == null) {
+    if (feed.id == null) {
       ScaffoldMessenger.of(context).showSnackBar(feedDeleteError);
     } else {
       FirebaseFirestore.instance
@@ -69,58 +64,59 @@ class _FeedsState extends State<Feeds> {
 
   showAlert(value) {
     showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Row(
-              children: [
-                Icon(
-                  Icons.warning_amber_rounded,
-                  color: Colors.red,
-                  size: 30,
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Row(
+            children: [
+              Icon(
+                Icons.warning_amber_rounded,
+                color: Colors.red,
+                size: 30,
+              ),
+              Padding(
+                padding: EdgeInsets.all(5),
+                child: Text("Delete?"),
+              ),
+            ],
+          ),
+          contentPadding: const EdgeInsets.all(20),
+          content: const Text("Are sure you want to delete The Post?"),
+          actionsAlignment: MainAxisAlignment.end,
+          elevation: 5,
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                "Cancel",
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 20,
                 ),
-                Padding(
-                  padding: EdgeInsets.all(5),
-                  child: Text("Delete?"),
-                ),
-              ],
+              ),
             ),
-            contentPadding: const EdgeInsets.all(20),
-            content: const Text("Are sure you want to delete The Post?"),
-            actionsAlignment: MainAxisAlignment.end,
-            elevation: 5,
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
+            Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  deleteFeed(value);
+                },
                 child: const Text(
-                  "Cancel",
+                  "Delete",
                   style: TextStyle(
-                    color: Colors.blue,
+                    color: Colors.red,
                     fontWeight: FontWeight.w500,
                     fontSize: 20,
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(right: 10),
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    deleteFeed(value);
-                  },
-                  child: const Text(
-                    "Delete",
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          );
-        });
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -166,8 +162,9 @@ class _FeedsState extends State<Feeds> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Card(
+        color: Theme.of(context).colorScheme.background,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        elevation: 6,
+        elevation: 3,
         child: InkWell(
           onTap: () {
             Navigator.push(
@@ -191,8 +188,8 @@ class _FeedsState extends State<Feeds> {
                     fontSize: 18,
                   ),
                 ),
-                subtitle:
-                    Text(TimeHandler().getTimeDiff(value.createdAt.toDate())),
+                subtitle: Text(
+                    DateTimeHandler.getDateTimeDiff(value.createdAt.toDate())),
                 trailing: user!.email == widget.room.admin
                     ? IconButton(
                         onPressed: () {
@@ -222,11 +219,12 @@ class _FeedsState extends State<Feeds> {
                   ? Padding(
                       padding: const EdgeInsets.all(10),
                       child: ClipRRect(
-                          borderRadius: BorderRadius.circular(7),
-                          child: Image.network(
-                            value.imageURL,
-                            fit: BoxFit.fitWidth,
-                          )),
+                        borderRadius: BorderRadius.circular(7),
+                        child: Image.network(
+                          value.imageURL,
+                          fit: BoxFit.fitWidth,
+                        ),
+                      ),
                     )
                   : const SizedBox(),
             ],

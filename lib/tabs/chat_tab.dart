@@ -1,6 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:expense_manager/utils/time_handler.dart';
+import 'package:expense_manager/widgets/message_tile.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../models/chat.dart';
 import '../models/room.dart';
 
 class ChatView extends StatefulWidget {
@@ -14,30 +18,66 @@ class ChatView extends StatefulWidget {
 
 class _ChatViewState extends State<ChatView> {
   final TextEditingController controller = TextEditingController();
+  final user = FirebaseAuth.instance.currentUser;
+
+  bool isNextDay(Message msg1, Message msg2) {
+    var day1 = DateTime(
+      msg1.createdDate.toDate().year,
+      msg1.createdDate.toDate().month,
+      msg1.createdDate.toDate().day,
+    );
+    var day2 = DateTime(
+      msg2.createdDate.toDate().year,
+      msg2.createdDate.toDate().month,
+      msg2.createdDate.toDate().day,
+    );
+    return (day2.difference(day1).inDays >= 1);
+  }
+
+  sendMessage(String text) {
+    Message message = Message.from(
+        sender: user!.email!, createdDate: Timestamp.now(), description: text);
+    FirebaseFirestore.instance
+        .collection('rooms/${widget.room.code}/chats')
+        .add(message.toMap());
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: Column(
         children: [
           Container(
             height: 80,
-            color: Colors.blueAccent,
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(10),
+                bottomRight: Radius.circular(10),
+              ),
+              // color: Theme.of(context).colorScheme.secondaryContainer,
+            ),
             child: Row(
               children: [
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 8, 4, 8),
+                    padding: const EdgeInsets.fromLTRB(10, 10, 5, 10),
                     child: Container(
-                      color: Colors.greenAccent,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.greenAccent.withAlpha(150),
+                      ),
                     ),
                   ),
                 ),
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(4, 8, 8, 8),
+                    padding: const EdgeInsets.fromLTRB(5, 10, 10, 10),
                     child: Container(
-                      color: Colors.redAccent,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.redAccent.withAlpha(150),
+                      ),
                     ),
                   ),
                 ),
@@ -52,18 +92,52 @@ class _ChatViewState extends State<ChatView> {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  var messages = [];
+                  List<Message> messages = [];
                   for (var element in snapshot.data!.docs) {
-                    messages.add(element.id);
+                    messages.add(Message.fromJson(element.data()));
                   }
                   return messages.isNotEmpty
                       ? ListView.builder(
                           reverse: true,
                           itemCount: messages.length,
-                          itemBuilder: (context, index) => Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: Text(messages[index].toString()),
-                          ),
+                          itemBuilder: (context, index) {
+                            return Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (index == messages.length - 1 ||
+                                    isNextDay(
+                                        messages[index + 1], messages[index]))
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width,
+                                    height: 40,
+                                    child: Center(
+                                      child: Container(
+                                        padding: const EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          color: Colors.grey.withAlpha(50),
+                                        ),
+                                        child: Text(
+                                          DateTimeHandler.getDateDiff(
+                                            messages[index]
+                                                .createdDate
+                                                .toDate(),
+                                          ),
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                MessageTile(
+                                  message: messages[index],
+                                ),
+                              ],
+                            );
+                          },
                         )
                       : const Center(
                           child: Text("No Feeds to show..."),
@@ -77,9 +151,82 @@ class _ChatViewState extends State<ChatView> {
             ),
           ),
           Container(
-            height: 50,
-            color: Colors.greenAccent,
-          )
+            alignment: Alignment.bottomCenter,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                  child: Material(
+                    elevation: 1,
+                    borderRadius: BorderRadius.circular(15),
+                    child: Container(
+                      // padding: const EdgeInsets.symmetric(horizontal: 5),
+                      width: MediaQuery.of(context).size.width * 0.7,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: Theme.of(context).colorScheme.secondaryContainer,
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.white,
+                          ),
+                        ],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: TextField(
+                          controller: controller,
+                          decoration: const InputDecoration(
+                            hintText: 'Send a message...',
+                            border: InputBorder.none,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.10,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.greenAccent.withAlpha(200),
+                    ),
+                    child: IconButton(
+                      onPressed: () {
+                        if (controller.text.trim() != '') {
+                          sendMessage(controller.value.text);
+                        }
+                        controller.clear();
+                      },
+                      icon: const Icon(Icons.send_rounded),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.10,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.blueAccent.withAlpha(200),
+                    ),
+                    child: IconButton(
+                      onPressed: () {
+                        //TODO: add popup
+                      },
+                      icon: const Icon(Icons.payments_sharp),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

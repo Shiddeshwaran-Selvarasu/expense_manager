@@ -17,7 +17,7 @@ class Assignee {
     return {
       'assignee': assignee,
       'doneAt': doneAt,
-      'amount': amount,
+      'amount': amount.toString(),
       'status': status,
     };
   }
@@ -25,7 +25,7 @@ class Assignee {
   static Assignee fromJson(var data) {
     return Assignee.from(
       assignee: data['assignee'],
-      amount: data['amount'],
+      amount: double.parse(data['amount']),
       doneAt: data['doneAt'],
       status: data['status'],
     );
@@ -41,7 +41,7 @@ class Message {
 
   Message.from({
     required this.sender,
-    required this.totalAmount,
+    this.totalAmount = 0,
     required this.createdDate,
     this.assignees = const [],
     this.description,
@@ -54,7 +54,7 @@ class Message {
   Map<String, dynamic> toMap() {
     return {
       'sender': sender,
-      'totalAmount': totalAmount,
+      'totalAmount': totalAmount.toString(),
       'description': description,
       'createdDate': createdDate,
       'assignees': assignees,
@@ -63,10 +63,14 @@ class Message {
 
   static Message fromJson(var data) {
     List<Assignee> assigneesList = [];
-    data['assignees'].forEach((e) => assigneesList.add(Assignee.fromJson(e)));
+    if (data['assignees'] != null) {
+      data['assignees'].forEach(
+        (e) => assigneesList.add(Assignee.fromJson(e)),
+      );
+    }
     return Message.from(
       sender: data['sender'],
-      totalAmount: data['totalAmount'],
+      totalAmount: double.parse(data['totalAmount'] ?? "0"),
       description: data['description'],
       createdDate: data['createdDate'],
       assignees: assigneesList,
