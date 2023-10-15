@@ -90,7 +90,7 @@ class _RoomTileState extends State<RoomTile> {
           var room =
               Room.fromJson(snapshot.data!.data() as Map<String, dynamic>);
           return Padding(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(5),
             child: InkWell(
               onTap: () {
                 Navigator.push(
@@ -101,15 +101,17 @@ class _RoomTileState extends State<RoomTile> {
                 );
               },
               child: Card(
-                elevation: 2,
                 child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor:
-                        Theme.of(context).colorScheme.primary.withAlpha(50),
-                    foregroundImage: const NetworkImage(
-                        "https://img.freepik.com/free-icon/user_318-159711.jpg"),
+                  leading: const CircleAvatar(
+                    backgroundColor: Colors.white,
+                    foregroundImage: NetworkImage(
+                      "https://cdn-icons-png.flaticon.com/512/8377/8377384.png",
+                    ),
                   ),
-                  title: Text(room.name),
+                  title: Text(
+                    room.name,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   subtitle: Text(room.admin),
                   trailing: IconButton(
                     onPressed: () {
