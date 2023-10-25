@@ -56,7 +56,9 @@ class AssigneeTextField {
   }
 
   double getVal() {
-    return double.parse(
-        controller.value.text.isEmpty ? '0.0' : controller.value.text);
+    if(controller.value.text.isEmpty){
+      return 0;
+    }
+    return double.parse(controller.value.text);
   }
 }

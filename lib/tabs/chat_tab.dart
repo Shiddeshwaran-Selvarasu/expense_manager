@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expense_manager/pages/add_payment.dart';
+import 'package:expense_manager/pages/income_view.dart';
 import 'package:expense_manager/utils/time_handler.dart';
 import 'package:expense_manager/widgets/message_tile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -63,30 +64,16 @@ class _ChatViewState extends State<ChatView> {
 
   bool isNextDay(Message msg1, Message msg2) {
     var day1 = DateTime(
-      msg1.createdDate
-          .toDate()
-          .year,
-      msg1.createdDate
-          .toDate()
-          .month,
-      msg1.createdDate
-          .toDate()
-          .day,
+      msg1.createdDate.toDate().year,
+      msg1.createdDate.toDate().month,
+      msg1.createdDate.toDate().day,
     );
     var day2 = DateTime(
-      msg2.createdDate
-          .toDate()
-          .year,
-      msg2.createdDate
-          .toDate()
-          .month,
-      msg2.createdDate
-          .toDate()
-          .day,
+      msg2.createdDate.toDate().year,
+      msg2.createdDate.toDate().month,
+      msg2.createdDate.toDate().day,
     );
-    return (day2
-        .difference(day1)
-        .inDays >= 1);
+    return (day2.difference(day1).inDays >= 1);
   }
 
   sendMessage(String text) {
@@ -104,17 +91,11 @@ class _ChatViewState extends State<ChatView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme
-          .of(context)
-          .colorScheme
-          .background,
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: Column(
         children: [
           Container(
-            height: MediaQuery
-                .of(context)
-                .size
-                .height * 0.08,
+            height: MediaQuery.of(context).size.height * 0.08,
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(10),
@@ -145,8 +126,21 @@ class _ChatViewState extends State<ChatView> {
                             borderRadius: BorderRadius.circular(10),
                             color: Colors.greenAccent.withAlpha(150),
                           ),
-                          child: Center(
-                            child: Text(getIncome(messages)),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => IncomeView(
+                                    messages: messages,
+                                    isIncome: true,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Center(
+                              child: Text(getIncome(messages)),
+                            ),
                           ),
                         ),
                       ),
@@ -159,8 +153,21 @@ class _ChatViewState extends State<ChatView> {
                             borderRadius: BorderRadius.circular(10),
                             color: Colors.redAccent.withAlpha(150),
                           ),
-                          child: Center(
-                            child: Text(getExpense(messages)),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => IncomeView(
+                                    messages: messages,
+                                    isIncome: false,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Center(
+                              child: Text(getExpense(messages)),
+                            ),
                           ),
                         ),
                       ),
@@ -184,54 +191,51 @@ class _ChatViewState extends State<ChatView> {
                   }
                   return messages.isNotEmpty
                       ? ListView.builder(
-                    reverse: true,
-                    itemCount: messages.length,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (index == messages.length - 1 ||
-                              isNextDay(
-                                  messages[index + 1], messages[index]))
-                            SizedBox(
-                              width: MediaQuery
-                                  .of(context)
-                                  .size
-                                  .width,
-                              height: 40,
-                              child: Center(
-                                child: Container(
-                                  padding: const EdgeInsets.all(5),
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                    BorderRadius.circular(5),
-                                    color: Colors.grey.withAlpha(50),
-                                  ),
-                                  child: Text(
-                                    DateTimeHandler.getDateDiff(
-                                      messages[index]
-                                          .createdDate
-                                          .toDate(),
+                          reverse: true,
+                          itemCount: messages.length,
+                          itemBuilder: (context, index) {
+                            return Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (index == messages.length - 1 ||
+                                    isNextDay(
+                                        messages[index + 1], messages[index]))
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width,
+                                    height: 40,
+                                    child: Center(
+                                      child: Container(
+                                        padding: const EdgeInsets.all(5),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          color: Colors.grey.withAlpha(50),
+                                        ),
+                                        child: Text(
+                                          DateTimeHandler.getDateDiff(
+                                            messages[index]
+                                                .createdDate
+                                                .toDate(),
+                                          ),
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                    ),
                                   ),
+                                MessageTile(
+                                  message: messages[index],
+                                  room: widget.room,
                                 ),
-                              ),
-                            ),
-                          MessageTile(
-                            message: messages[index],
-                            room: widget.room,
-                          ),
-                        ],
-                      );
-                    },
-                  )
+                              ],
+                            );
+                          },
+                        )
                       : const Center(
-                        child: Text("No Chats to show..."),
-                  );
+                          child: Text("No Chats to show..."),
+                        );
                 }
 
                 return const Center(
@@ -248,22 +252,16 @@ class _ChatViewState extends State<ChatView> {
               children: [
                 Padding(
                   padding:
-                  const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                   child: Material(
                     elevation: 1,
                     borderRadius: BorderRadius.circular(15),
                     child: Container(
                       // padding: const EdgeInsets.symmetric(horizontal: 5),
-                      width: MediaQuery
-                          .of(context)
-                          .size
-                          .width * 0.7,
+                      width: MediaQuery.of(context).size.width * 0.7,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15),
-                        color: Theme
-                            .of(context)
-                            .colorScheme
-                            .secondaryContainer,
+                        color: Theme.of(context).colorScheme.secondaryContainer,
                         boxShadow: const [
                           BoxShadow(
                             color: Colors.white,
@@ -286,10 +284,7 @@ class _ChatViewState extends State<ChatView> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 5),
                   child: Container(
-                    width: MediaQuery
-                        .of(context)
-                        .size
-                        .width * 0.10,
+                    width: MediaQuery.of(context).size.width * 0.10,
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
@@ -309,10 +304,7 @@ class _ChatViewState extends State<ChatView> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 5),
                   child: Container(
-                    width: MediaQuery
-                        .of(context)
-                        .size
-                        .width * 0.10,
+                    width: MediaQuery.of(context).size.width * 0.10,
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
@@ -323,10 +315,9 @@ class _ChatViewState extends State<ChatView> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                AddPayment(
-                                  room: widget.room,
-                                ),
+                            builder: (context) => AddPayment(
+                              room: widget.room,
+                            ),
                           ),
                         );
                       },

@@ -36,6 +36,23 @@ class _MessageUIState extends State<MessageUI> {
     return value;
   }
 
+  String getAmount(){
+    String result = '';
+
+    if(widget.message.sender == user!.email){
+      result = widget.message.getPrice();
+    } else {
+      for(var assignee in widget.message.assignees){
+        if(assignee.email == user!.email) {
+          result = assignee.getPrice();
+          break;
+        }
+      }
+    }
+
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isSender = widget.message.sender == user!.email;
@@ -68,7 +85,7 @@ class _MessageUIState extends State<MessageUI> {
           Padding(
             padding: const EdgeInsets.only(top: 8, left: 8,right: 8, bottom: 2),
             child: Text(
-              widget.message.getPrice(),
+              getAmount(),
               style: const TextStyle(
                 fontWeight: FontWeight.w500,
                 fontSize: 18,

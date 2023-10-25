@@ -34,18 +34,14 @@ class _FeedsState extends State<Feeds> {
   );
 
   addFeeds() {
-    if (user!.email == widget.room.admin) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => AddFeeds(
-            code: widget.room.code,
-          ),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddFeeds(
+          code: widget.room.code,
         ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    }
+      ),
+    );
   }
 
   deleteFeed(Feed feed) {

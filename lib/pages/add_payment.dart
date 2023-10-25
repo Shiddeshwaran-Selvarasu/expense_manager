@@ -18,11 +18,10 @@ class AddPayment extends StatefulWidget {
 
 class _AddPaymentState extends State<AddPayment> {
   final user = FirebaseAuth.instance.currentUser;
-  final _amountController = TextEditingController();
+  double totalAmount = 0.0;
   final _descriptionController = TextEditingController();
   String? amountError;
   final List<AssigneeTextField> _assigneeControllers = [];
-  double defaultVal = 0.0;
   NumberFormat myFormat = NumberFormat.currency(
     locale: 'en_in',
     symbol: '\u{20B9}',
@@ -68,11 +67,8 @@ class _AddPaymentState extends State<AddPayment> {
                     errorText: _assigneeControllers[index].error,
                   ),
                   onChanged: (txt) {
-                    if (txt.isEmpty) {
-                      _assigneeControllers[index].controller.text = '0.0';
-                    }
                     setState(() {
-                      defaultVal = double.parse('0.0');
+                      totalAmount = getTotal();
                     });
                   },
                 ),
@@ -89,7 +85,7 @@ class _AddPaymentState extends State<AddPayment> {
     List<Assignee> assignees = [];
 
     for (AssigneeTextField assTxt in _assigneeControllers) {
-      if(assTxt.getVal() == 0.0){
+      if(assTxt.getVal() == 0){
         continue;
       }
       assignees.add(
@@ -107,26 +103,20 @@ class _AddPaymentState extends State<AddPayment> {
       createdDate: Timestamp.now(),
       assignees: assignees,
       description: _descriptionController.value.text,
-      totalAmount: double.parse(_amountController.value.text),
+      totalAmount: totalAmount,
     );
 
     FirebaseFirestore.instance.collection('rooms/${widget.room.code}/chats').add(message.toMap());
   }
 
-  getDiff() {
-    double total = defaultVal;
-    try {
-      total = double.parse(_amountController.value.text);
-    } catch (e) {
-      print(e);
-    }
-    double sum = 0.0;
+  getTotal() {
+    double total = 0;
 
-    for (AssigneeTextField assTxt in _assigneeControllers) {
-      sum += assTxt.getVal();
+    for(var assTxt in _assigneeControllers){
+      total += assTxt.getVal();
     }
 
-    return total - sum;
+    return total;
   }
 
   @override
@@ -140,14 +130,10 @@ class _AddPaymentState extends State<AddPayment> {
         actions: [
           IconButton(
             onPressed: () {
-              if (_amountController.value.text.isNotEmpty &&
+              if (totalAmount > 0 &&
                   _assigneeControllers.isNotEmpty) {
                 Navigator.pop(context);
                 sendMessage();
-              } else if (_amountController.value.text.isEmpty) {
-                setState(() {
-                  amountError = 'Amount can\'t be empty';
-                });
               }
             },
             icon: const Icon(Icons.done),
@@ -161,36 +147,13 @@ class _AddPaymentState extends State<AddPayment> {
           mainAxisSize: MainAxisSize.max,
           children: [
             SizedBox(
+              height: MediaQuery.of(context).size.height * 0.1,
               child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      top: 20, left: 20, right: 20, bottom: 10),
-                  child: TextField(
-                    controller: _amountController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      border: const OutlineInputBorder(
-                        borderSide: BorderSide(),
-                      ),
-                      errorText: amountError,
-                      hintText: 'Enter Total Amount',
-                      labelText: 'Total Amount',
-                    ),
-                    onChanged: (text) {
-                      setState(() {
-                        if (text.isNotEmpty) {
-                          amountError = null;
-                        }
-                        defaultVal = 0.0;
-                      });
-                      double val = 0.0;
-                      if (text.isNotEmpty) {
-                        val = double.parse(text) / widget.room.members.length;
-                      }
-                      for (AssigneeTextField assTxt in _assigneeControllers) {
-                        assTxt.changeVal(val);
-                      }
-                    },
+                child: Text(
+                  myFormat.format(totalAmount),
+                  style: const TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -236,14 +199,6 @@ class _AddPaymentState extends State<AddPayment> {
                 );
               },
             ),
-            if (getDiff() != 0.0)
-              Text(
-                'Difference Amount: ${myFormat.format(getDiff().abs())}',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: getDiff() < 0 ? Colors.green : Colors.red,
-                ),
-              ),
           ],
         ),
       ),
