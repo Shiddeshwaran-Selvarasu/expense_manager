@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:expense_manager/pages/login_page.dart';
 import 'package:expense_manager/utils/login_manager.dart';
+import 'package:feedback/feedback.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,11 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(const MyApp());
+  runApp(
+    const BetterFeedback(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

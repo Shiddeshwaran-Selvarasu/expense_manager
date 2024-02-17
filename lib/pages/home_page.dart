@@ -4,11 +4,14 @@ import 'package:expense_manager/pages/add_room.dart';
 import 'package:expense_manager/pages/request_page.dart';
 import 'package:expense_manager/utils/login_manager.dart';
 import 'package:expense_manager/widgets/rooms_list.dart';
+import 'package:feedback/feedback.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mailer/smtp_server/sendgrid.dart';
 import 'package:provider/provider.dart';
+import 'package:mailer/mailer.dart' as email;
 
-import '../models/room.dart';
 import '../widgets/account_popup.dart';
 import '../widgets/popup_dialog.dart';
 
@@ -21,6 +24,47 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final user = FirebaseAuth.instance.currentUser;
+
+  void _showToast(String text,bool isError) {
+    String color = isError ? "#ff3333":"#4caf50";
+    Fluttertoast.showToast(
+      msg: text,
+      backgroundColor: isError ? Colors.red : Colors.green,
+      webBgColor: color,
+      gravity: ToastGravity.BOTTOM,
+      toastLength: Toast.LENGTH_LONG,
+      timeInSecForIosWeb: 2,
+    );
+  }
+
+  Future sendEmail(UserFeedback feedback) async {
+    final smtpServer = sendgrid(
+      'apikey',
+      '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',
+    );
+
+    final screenshot = Stream.value(feedback.screenshot.toList());
+
+    final message = email.Message()
+      ..from = const email.Address(feedBackEmail, 'Expense Manager')
+      ..recipients = ['s.shiddeshwaran@gmail.com', 'profession.ragul@gmail.com']
+      ..subject = 'Feedback[Expense Manager]'
+      ..text = feedback.text
+      ..attachments = [
+        email.StreamAttachment(
+          screenshot,
+          'image/png',
+          fileName: 'screenshot.png',
+        ),
+      ];
+
+    try {
+      await email.send(message, smtpServer);
+      _showToast('Thank you for your valuable feedback!', false);
+    } catch (e) {
+      _showToast('Error reporting your feedback!', true);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,6 +120,24 @@ class _HomePageState extends State<HomePage> {
                                       color: Colors.orangeAccent,
                                     ),
                                     title: const Text("Requests"),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 0, horizontal: 15),
+                                  child: ListTile(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      BetterFeedback.of(context)
+                                          .show((UserFeedback feedback) {
+                                        sendEmail(feedback);
+                                      });
+                                    },
+                                    leading: const Icon(
+                                      Icons.bug_report_outlined,
+                                      color: Colors.teal,
+                                    ),
+                                    title: const Text("send Feedback"),
                                   ),
                                 ),
                               ],
