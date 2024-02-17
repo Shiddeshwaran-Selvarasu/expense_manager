@@ -2,9 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 const String defaultProfileImage =
     "https://img.freepik.com/free-icon/user_318-159711.jpg";
-const String feedBackEmail = 'pcdev.tech@gmail.com';
-const String sendGridToken =
-    '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';
+const String feedBackEmail = 'feedback.pcdev@gmail.com';
 
 class UserData {
   final String name;

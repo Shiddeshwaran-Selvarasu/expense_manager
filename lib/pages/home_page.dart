@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:expense_manager/credentials/sendinblue_creds.dart';
 import 'package:expense_manager/models/constants.dart';
 import 'package:expense_manager/pages/add_room.dart';
 import 'package:expense_manager/pages/request_page.dart';
@@ -8,7 +9,7 @@ import 'package:feedback/feedback.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mailer/smtp_server/sendgrid.dart';
+import 'package:mailer/smtp_server.dart';
 import 'package:provider/provider.dart';
 import 'package:mailer/mailer.dart' as email;
 
@@ -25,8 +26,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final user = FirebaseAuth.instance.currentUser;
 
-  void _showToast(String text,bool isError) {
-    String color = isError ? "#ff3333":"#4caf50";
+  void _showToast(String text, bool isError) {
+    String color = isError ? "#ff3333" : "#4caf50";
     Fluttertoast.showToast(
       msg: text,
       backgroundColor: isError ? Colors.red : Colors.green,
@@ -38,9 +39,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future sendEmail(UserFeedback feedback) async {
-    final smtpServer = sendgrid(
-      'apikey',
-      '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',
+    final smtpServer = SmtpServer(
+      'smtp-relay.sendinblue.com',
+      port: 587,
+      username: brevoUsername,
+      password: brevoPassword,
     );
 
     final screenshot = Stream.value(feedback.screenshot.toList());
