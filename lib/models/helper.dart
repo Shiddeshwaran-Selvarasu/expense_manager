@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'constants.dart';
+
 class AddPeopleList {
   AddPeopleList({
     required this.controller,
@@ -24,4 +26,12 @@ class UserList {
   final String name;
   final String email;
   final String imageUrl;
+
+  factory UserList.unknownUser({String? email}){
+    return UserList(
+      name: 'Unknown User',
+      email: email ?? 'nil',
+      imageUrl: defaultProfileImage,
+    );
+  }
 }

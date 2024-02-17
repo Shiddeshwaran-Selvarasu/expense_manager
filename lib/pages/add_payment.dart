@@ -7,16 +7,16 @@ import 'package:intl/intl.dart';
 
 import '../models/room.dart';
 
-class AddPayment extends StatefulWidget {
-  const AddPayment({required this.room, super.key});
+class AddSplit extends StatefulWidget {
+  const AddSplit({required this.room, super.key});
 
   final Room room;
 
   @override
-  State<AddPayment> createState() => _AddPaymentState();
+  State<AddSplit> createState() => _AddSplitState();
 }
 
-class _AddPaymentState extends State<AddPayment> {
+class _AddSplitState extends State<AddSplit> {
   final user = FirebaseAuth.instance.currentUser;
   double totalAmount = 0.0;
   final _descriptionController = TextEditingController();
@@ -189,7 +189,7 @@ class _AddPaymentState extends State<AddPayment> {
                       .doc(widget.room.members[index])
                       .snapshots(),
                   builder: (context, snapshot) {
-                    if (snapshot.hasData) {
+                    if (snapshot.hasData && snapshot.data!.exists) {
                       UserData userDate =
                           UserData.fromMap(snapshot.data!.data()!);
                       return assigneeCard(userDate, index);

@@ -315,7 +315,7 @@ class _ChatViewState extends State<ChatView> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => AddPayment(
+                            builder: (context) => AddSplit(
                               room: widget.room,
                             ),
                           ),

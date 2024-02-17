@@ -127,11 +127,14 @@ class _PeopleState extends State<People> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection('/rooms').doc(widget.room.code).snapshots(),
-        builder: (context, snapshot){
+        stream: FirebaseFirestore.instance
+            .collection('/rooms')
+            .doc(widget.room.code)
+            .snapshots(),
+        builder: (context, snapshot) {
           List<dynamic> peopleList = [];
 
-          if(snapshot.hasData){
+          if (snapshot.hasData) {
             var data = snapshot.data!.data() ?? {};
             peopleList = data['people'];
             return ListView.builder(
@@ -139,11 +142,24 @@ class _PeopleState extends State<People> {
               itemBuilder: (context, index) => Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 5),
                 child: StreamBuilder(
-                  stream: FirebaseFirestore.instance.collection('/users').doc(peopleList[index]).snapshots(),
+                  stream: FirebaseFirestore.instance
+                      .collection('/users')
+                      .doc(peopleList[index])
+                      .snapshots(),
                   builder: (context, snapshot) {
-                    if(snapshot.hasData){
-                      var snapData = snapshot.data!.data() ?? {};
-                      var userData = UserList(name: snapData['name'], email: snapData['email'], imageUrl: snapData['profileImageUrl']);
+                    if (snapshot.hasData) {
+                      var userData;
+                      if (snapshot.data!.exists) {
+                        var snapData = snapshot.data!.data() ?? {};
+                        userData = UserList(
+                            name: snapData['name'],
+                            email: snapData['email'],
+                            imageUrl: snapData['profileImageUrl']);
+                      } else {
+                        userData = UserList.unknownUser(
+                          email: snapshot.data!.id,
+                        );
+                      }
                       return ListTile(
                         leading: CircleAvatar(
                           foregroundImage: NetworkImage(userData.imageUrl),
@@ -172,7 +188,9 @@ class _PeopleState extends State<People> {
             );
           }
 
-          return const Center(child: CircularProgressIndicator(),);
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
         },
       ),
       floatingActionButton: FloatingActionButton(
