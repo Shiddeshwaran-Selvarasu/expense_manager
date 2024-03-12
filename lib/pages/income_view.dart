@@ -41,7 +41,7 @@ class _IncomeViewState extends State<IncomeView> {
 
   getTotal(isIncome) {
     double value = 0.0;
-    if (widget.messages.isEmpty) return myFormat.format(value);
+    if (widget.messages.isEmpty) return value;
 
     if (isIncome) {
       for (var message in widget.messages) {
