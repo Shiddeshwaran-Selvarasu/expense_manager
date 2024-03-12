@@ -33,9 +33,15 @@ class DefaultFirebaseOptions {
           'you can reconfigure this by running the FlutterFire CLI again.',
         );
       case TargetPlatform.windows:
-        return web;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for windows - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.linux:
-        return web;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for linux - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       default:
         throw UnsupportedError(
           'DefaultFirebaseOptions are not supported for this platform.',
@@ -45,17 +51,17 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyAiUvZNcWTekYHu0nRnmLSyBZy1stXcGDs',
-    appId: '1:587886628314:web:83787a774427faa06804e3',
+    appId: '1:587886628314:web:483f01e8e710b85e6804e3',
     messagingSenderId: '587886628314',
     projectId: 'expance-manager-2599a',
     authDomain: 'expance-manager-2599a.firebaseapp.com',
     storageBucket: 'expance-manager-2599a.appspot.com',
-    measurementId: 'G-LXLGN10WP3',
+    measurementId: 'G-ZH49JVTC7K',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyB4Y-pMAUyL8F5OPyOCduLlXz8Waen4nxM',
-    appId: '1:587886628314:android:1290aa73fe01d5736804e3',
+    appId: '1:587886628314:android:79bb00f6d9f99c976804e3',
     messagingSenderId: '587886628314',
     projectId: 'expance-manager-2599a',
     storageBucket: 'expance-manager-2599a.appspot.com',

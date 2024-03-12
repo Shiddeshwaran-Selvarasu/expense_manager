@@ -7,14 +7,14 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:587886628314:android:1290aa73fe01d5736804e3",
+        "mobilesdk_app_id": "1:587886628314:android:79bb00f6d9f99c976804e3",
         "android_client_info": {
-          "package_name": "com.example.expense_manager"
+          "package_name": "tech.pcdev.expense_manager"
         }
       },
       "oauth_client": [
         {
-          "client_id": "587886628314-e03i4sp9d9ni47o2lk7u924v91en2qtv.apps.googleusercontent.com",
+          "client_id": "587886628314-4dg69k124ro47t4t164vpalcqr3i69vf.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -27,8 +27,15 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "587886628314-e03i4sp9d9ni47o2lk7u924v91en2qtv.apps.googleusercontent.com",
+              "client_id": "587886628314-4dg69k124ro47t4t164vpalcqr3i69vf.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "587886628314-ldpp247pkgvsqea0dfmeikepa0odan11.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.expenseManager"
+              }
             }
           ]
         }

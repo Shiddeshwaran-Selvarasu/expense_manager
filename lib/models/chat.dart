@@ -72,6 +72,10 @@ class Message {
     return myFormat.format(totalAmount);
   }
 
+  double getSharePrice(String email) {
+    return assignees.where((element) => element.email == email).first.amount;
+  }
+
   Map<String, dynamic> toMap() {
     List<Map<String, dynamic>> list = [];
     for (var element in assignees) {

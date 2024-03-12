@@ -1,8 +1,24 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
+import 'package:pdf/pdf.dart';
+
+import 'chat.dart';
 
 const String defaultProfileImage =
     "https://img.freepik.com/free-icon/user_318-159711.jpg";
 const String feedBackEmail = 'feedback.pcdev@gmail.com';
+
+const double point = 1.0;
+const double inch = 72.0;
+const double cm = inch / 2.54;
+const double mm = inch / 25.4;
+
+const PdfPageFormat customPageFormat = PdfPageFormat(
+  21.0 * cm,
+  29.7 * cm,
+  marginAll: 30,
+);
 
 class UserData {
   final String name;
@@ -41,6 +57,30 @@ class UserData {
     );
   }
 }
+
+// class GraphData {
+//   final String sender;
+//   final String receiver;
+//   final DateTime createdTime;
+//   final double amount;
+//
+//   GraphData({
+//     required this.sender,
+//     required this.receiver,
+//     required this.createdTime,
+//     required this.amount,
+//   });
+//
+//   static GraphData fromMessageList(Message message) {
+//
+//     return GraphData(
+//       sender: message.sender,
+//       receiver: email,
+//       createdTime: message.createdDate.toDate(),
+//       amount: message.getSharePrice(email),
+//     );
+//   }
+// }
 
 class AssigneeTextField {
   final String email;

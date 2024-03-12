@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expense_manager/models/chat.dart';
+import 'package:expense_manager/pages/transction_report.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 
 import '../models/constants.dart';
@@ -24,11 +27,23 @@ class _IncomeViewState extends State<IncomeView> {
     decimalDigits: 2,
   );
 
-  getTotal() {
+  void _showToast(String text,bool isError) {
+    String color = isError ? "#ff3333":"#4caf50";
+    Fluttertoast.showToast(
+      msg: text,
+      backgroundColor: isError ? Colors.red : Colors.green,
+      webBgColor: color,
+      gravity: ToastGravity.BOTTOM,
+      toastLength: Toast.LENGTH_LONG,
+      timeInSecForIosWeb: 2,
+    );
+  }
+
+  getTotal(isIncome) {
     double value = 0.0;
     if (widget.messages.isEmpty) return myFormat.format(value);
 
-    if (widget.isIncome) {
+    if (isIncome) {
       for (var message in widget.messages) {
         if (message.sender == user!.email) {
           for (var assignee in message.assignees) {
@@ -50,7 +65,7 @@ class _IncomeViewState extends State<IncomeView> {
       }
     }
 
-    return myFormat.format(value);
+    return value;
   }
 
   Widget assigneeCard(Assignee assignee, String email) {
@@ -128,11 +143,11 @@ class _IncomeViewState extends State<IncomeView> {
             },
           )
         : const Center(
-          child: Padding(
-            padding: EdgeInsets.all(15),
-            child: Text('No Transactions pending....'),
-          ),
-        );
+            child: Padding(
+              padding: EdgeInsets.all(15),
+              child: Text('No Transactions pending....'),
+            ),
+          );
   }
 
   @override
@@ -142,6 +157,28 @@ class _IncomeViewState extends State<IncomeView> {
       appBar: AppBar(
         centerTitle: true,
         title: Text('${widget.isIncome ? 'Income' : 'Expanse'} Summary'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              print(getTotal(true));
+              print(getTotal(false));
+              if (!(getTotal(true) == 0) || !(getTotal(false) == 0)) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TransactionReport(
+                      isIncome: widget.isIncome,
+                      messages: widget.messages,
+                    ),
+                  ),
+                );
+              } else {
+                _showToast('Zero income and Expense', true);
+              }
+            },
+            icon: const Icon(Icons.picture_as_pdf_rounded),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -153,7 +190,7 @@ class _IncomeViewState extends State<IncomeView> {
               height: MediaQuery.of(context).size.height * 0.1,
               child: Center(
                 child: Text(
-                  getTotal(),
+                  myFormat.format(getTotal(widget.isIncome)),
                   style: const TextStyle(
                     fontSize: 40,
                     fontWeight: FontWeight.w600,
